@@ -44,17 +44,18 @@ func Run(token string, guildID string) {
 		log.Fatal(bot_create_err)
 	}
 
-	discord.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
-			h(s, i)
-		}
-	})
 	discord.AddHandler(ready)
 
 	discord_open_err := discord.Open()
 	if discord_open_err != nil {
 		log.Fatalf("Cannot open the session: %v", discord_open_err)
 	}
+
+	discord.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+			h(s, i)
+		}
+	})
 
 	log.Println("Adding commands...")
 	registeredCommands := make([]*discordgo.ApplicationCommand, len(commands))
